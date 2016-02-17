@@ -1,39 +1,35 @@
-var simulator = angular.module("simulator", ["firebase", "angularLocalStorage",
+var simulator = angular.module("simulator", ["angularLocalStorage",
                                              "simulator.lsview", "simulator.codeview"]);
 
-var URL = "https://dpealight.firebaseio.com";
-
-simulator.controller('SimCtrl', ['$scope', '$rootScope', '$firebase',
-                                    '$firebaseSimpleLogin', 'storage', SimCtrl]);
-function SimCtrl($scope, $rootScope, $firebase, $firebaseSimpleLogin, storage) {
+simulator.controller('SimCtrl', ['$scope', '$rootScope', 'storage', SimCtrl]);
+function SimCtrl($scope, $rootScope, storage) {
     $scope.renderPoles = true;
     storage.bind($scope, 'designs', {defaultValue: {}});
     startWatch($scope);
-    $scope.loginObj = $firebaseSimpleLogin(new Firebase(URL));
     $scope.pins = {};
-    $scope.auth = {
-        authenticated: false,
-        user: null
+
+    $scope.export = function() {
+        var design = $scope.designs[$scope.design];
+        saveAs(new Blob([JSON.stringify(design)]), design.name + ".ls");
     };
 
-    $rootScope.$on("$firebaseSimpleLogin:login", function(e, user) {
-        $scope.auth = {
-            authenticated: true,
-            user: user.id.replace(',', '.')
+    // of course this isn't hacky
+    document.getElementById("import").addEventListener('change', function(evt) {
+        var file = evt.target.files[0];
+        if (file.name.slice(-3) !== ".ls") {
+            return;
+        }
+
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            $scope.$apply(function() {
+                var value = JSON.parse(reader.result);
+                $scope.designs[value.name] = value;
+                $scope.design = value.name;
+            });
         };
-        var userRef = new Firebase(URL + "/" + user.uid);
-        $firebase(userRef.child('designs')).$bind($scope, 'designs').then(function() {
-            $scope.setDesign();
-        });
-    });
-    $rootScope.$on("$firebaseSimpleLogin:logout", function(e) {
-        $scope.auth = {
-            authenticated: false,
-            user: null
-        };
-        storage.bind($scope, 'designs');
-        $scope.setDesign();
-    });
+        reader.readAsText(file);
+    }, false);
 }
 
 function startWatch($scope) {

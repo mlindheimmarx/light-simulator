@@ -7,13 +7,6 @@
     <link rel="stylesheet" href="css/main.css">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.js"></script>
-    <script src="//cdn.firebase.com/v0/firebase.js"></script>
-    <!-- persona is currently broken in their simple login, so use own
-    <script src="//cdn.firebase.com/js/simple-login/1.2.0/firebase-simple-login.js"></script>
-    -->
-    <script src="lib/firebase-simple-login.js"></script>
-    <script src="//login.persona.org/include.js"></script>
-    <script src="//cdn.firebase.com/libs/angularfire/0.6.0/angularfire.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
     <script src="bower_components/angularLocalStorage/src/angularLocalStorage.js"></script>
     <script src="lib/three.min.js"></script>
@@ -25,12 +18,13 @@
     <script src="js/controllers.js"></script>
     <script src="js/code.js"></script>
     <script src="lib/bootstrap.min.js"></script>
+    <script src="lib/FileSaver.min.js"></script>
   </head>
   <body ng-controller="SimCtrl">
     <div id="glcanvas" ls-view></div>
     <a ng-click="coding = true" type="button" class="btn btn-primary btn-large" id="edit-code">Edit code</a>
-    <a type="button" class="btn btn-primary btn-large" id="login" ng-hide="auth.authenticated" ng-click="loginObj.$login('persona')">Login to save in the cloud</a>
-    <a type="button" class="btn btn-primary btn-large" id="logout" ng-show="auth.authenticated" ng-click="loginObj.$logout()">Logged in as {{auth.user}} — Logout</a>
+    <a id="export" type="button" class="btn btn-primary btn-large" ng-click="export()">Export</a>
+    <input type="file" id="import" class="btn btn-primary btn-large">Import</a>
     <div id="edit-rods" class="panel panel-primary">
       <div class="panel-heading">
         <h4 class="panel-title">

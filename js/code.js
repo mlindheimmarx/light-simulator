@@ -2,7 +2,6 @@
     var module = angular.module('simulator.codeview', []);
     module.directive('codeView', function() { return { link: codeView }; });
     function codeView($scope, elem, attrs) {
-        console.log(elem.context);
         var editor = ace.edit(elem.context);
         editor.setTheme("ace/theme/github");
         editor.getSession().setMode("ace/mode/c_cpp");
